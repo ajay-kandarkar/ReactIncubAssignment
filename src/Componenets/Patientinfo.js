@@ -17,7 +17,7 @@ function Patientinfo() {
         note: "",
         mobile_No: "",
         countryId: "",
-        doctorId:"",
+        doctorId: "",
         isCheck: 1,
     });
     useEffect(() => {
@@ -37,69 +37,69 @@ function Patientinfo() {
             email: patientDetails[index].Email,
             gender: patientDetails[index].Gender,
             countryId: patientDetails[index].CountryId,
-            doctorId:patientDetails[index].CountryId,
+            doctorId: patientDetails[index].CountryId,
             DOB: patientDetails[index].DOB,
             address: patientDetails[index].Address,
             note: patientDetails[index].Note,
             mobile_No: patientDetails[index].Mobile_No,
-            isCheck:patientDetails[index].IsCheck
+            isCheck: patientDetails[index].IsCheck
         });
     };
     const updatePatient = () => {
-            const updatedPatientDetails = [...patientDetails];
-            const existingPatient = updatedPatientDetails[currentPatientId];
-            const updatedPatient = {
-                ...existingPatient,
-                Name: patientInfo?.name,
-                Email: patientInfo?.email,
-                DoctorId:patientInfo?.doctorId,
-                Gender: patientInfo?.gender,
-                CountryId: patientInfo.countryId,
-                DOB: patientInfo.DOB,
-                Address: patientInfo.address,
-                Note: patientInfo.note,
-                Mobile_No: patientInfo.mobile_No,
-                IsCheck:patientInfo.isCheck,
-            };
-            axios.put(`http://localhost:8080/update-patient-details/${currentPatientId}`, updatedPatient)
-                .then(response => {
-                    window.location.reload();
-                    toast.success("Successfully updated patient information", {
-                        position: toast.POSITION.TOP_CENTER,
-                    });
-                    updatedPatientDetails[currentPatientId] = response.data;
-                    setPatientDetails(updatedPatientDetails);
-                })
-                .catch(error => {
-                    console.error('Error updating patient:', error);
-                    toast.error("Failed to update patient. Please try again.", {
-                        position: toast.POSITION.TOP_CENTER,
-                    });
+        const updatedPatientDetails = [...patientDetails];
+        const existingPatient = updatedPatientDetails[currentPatientId];
+        const updatedPatient = {
+            ...existingPatient,
+            Name: patientInfo?.name,
+            Email: patientInfo?.email,
+            DoctorId: patientInfo?.doctorId,
+            Gender: patientInfo?.gender,
+            CountryId: patientInfo.countryId,
+            DOB: patientInfo.DOB,
+            Address: patientInfo.address,
+            Note: patientInfo.note,
+            Mobile_No: patientInfo.mobile_No,
+            IsCheck: patientInfo.isCheck,
+        };
+        axios.put(`http://localhost:8080/update-patient-details/${currentPatientId}`, updatedPatient)
+            .then(response => {
+                window.location.reload();
+                toast.success("Successfully updated patient information", {
+                    position: toast.POSITION.TOP_CENTER,
                 });
+                updatedPatientDetails[currentPatientId] = response.data;
+                setPatientDetails(updatedPatientDetails);
+            })
+            .catch(error => {
+                console.error('Error updating patient:', error);
+                toast.error("Failed to update patient. Please try again.", {
+                    position: toast.POSITION.TOP_CENTER,
+                });
+            });
     };
     const PatientDetailsDelete = (patientId) => {
         setCurrentPatientId(patientId);
     };
     const confirmDelete = () => {
-            const idToDeleted = currentPatientId;
-            axios.delete(`http://localhost:8080/delete-patient/${idToDeleted}`)
-                .then(() => {
-                    const updatedPatientDetails = patientDetails.filter(
-                        (_, patientId) => patientId !== idToDeleted
-                    );
-                    setPatientDetails(updatedPatientDetails);
-                    window.location.reload();
-                    handleCloseDeleteConfirmation();
-                    toast.error("Patient Deleted  Successfully!!!", {
-                        position: toast.POSITION.TOP_CENTER,
-                    });
-                })
-                .catch((error) => {
-                    console.error('Error deleting patient:', error);
-                    toast.error("Failed to delete patient. Please try again.", {
-                        position: toast.POSITION.TOP_CENTER,
-                    });
+        const idToDeleted = currentPatientId;
+        axios.delete(`http://localhost:8080/delete-patient/${idToDeleted}`)
+            .then(() => {
+                const updatedPatientDetails = patientDetails.filter(
+                    (_, patientId) => patientId !== idToDeleted
+                );
+                setPatientDetails(updatedPatientDetails);
+                window.location.reload();
+                handleCloseDeleteConfirmation();
+                toast.error("Patient Deleted  Successfully!!!", {
+                    position: toast.POSITION.TOP_CENTER,
                 });
+            })
+            .catch((error) => {
+                console.error('Error deleting patient:', error);
+                toast.error("Failed to delete patient. Please try again.", {
+                    position: toast.POSITION.TOP_CENTER,
+                });
+            });
     };
     const navigate = useNavigate();
     const handleCloseDeleteConfirmation = () => {
@@ -164,34 +164,34 @@ function Patientinfo() {
                             <tbody>
                                 {
                                     patientDetails.filter((item) => {
-                                        return searchPatient=== '' ? item : item.Name.includes(searchPatient)
+                                        return searchPatient === '' ? item : item.Name.includes(searchPatient)
                                     }).map((patient, index) => (
-                                            <tr key={patient.Id}>
-                                                <td>{patient.Name}</td>
-                                                <td>{patient.Email}</td>
-                                                <td>{patient.Gender}</td>
-                                                <td>{patient.Mobile_No}</td>
-                                                <td>{patient.DOB}</td>
-                                                <td className='text-center'>
-                                                    <button
-                                                        className="btn btn-primary mx-2"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#PatientDetailedit"
-                                                        onClick={() => patientDetailsEdit(index)}
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-danger mx-2"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#patientDelete"
-                                                        onClick={() => PatientDetailsDelete(patient.Id)}
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        <tr key={patient.Id}>
+                                            <td>{patient.Name}</td>
+                                            <td>{patient.Email}</td>
+                                            <td>{patient.Gender}</td>
+                                            <td>{patient.Mobile_No}</td>
+                                            <td>{patient.DOB}</td>
+                                            <td className='text-center'>
+                                                <button
+                                                    className="btn btn-primary mx-2"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#PatientDetailedit"
+                                                    onClick={() => patientDetailsEdit(index)}
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    className="btn btn-danger mx-2"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#patientDelete"
+                                                    onClick={() => PatientDetailsDelete(patient.Id)}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
                             </tbody>
                         </table>
                     </div>
@@ -303,6 +303,15 @@ function Patientinfo() {
                                                     onChange={(e) => setPatientInfo({ ...patientInfo, mobile_No: e.target.value })}
                                                 />
                                             </div>
+                                            <div className='text-end'>
+                                                <button
+                                                    className="btn btn-primary mx-2"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#PatientDetaileHistory"
+                                                >
+                                                    Add
+                                                </button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -366,6 +375,45 @@ function Patientinfo() {
                         </div>
                     </div>
                 </div>
+
+
+                {/* it is used for to add history of patient  */}
+                <div className="modal fade" id="PatientDetaileHistory" tabIndex="-1" aria-labelledby="PatientDetaileHistoryLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="PatientDetaileHistoryLabel">
+                                    Add Treatment History
+                                </h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="container my-3">
+                                    <div class="container">
+                                        <div class="row row-cols-3">
+                                            <div class="col">Column</div>
+                                            <div class="col">Column</div>
+                                            <div class="col">Column</div>
+                                            <div class="col">Column</div>
+                                            <div class="col">Column</div>
+                                            <div class="col">Column</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                                    Close
+                                </button>
+                                <button type="button" className="btn btn-primary" onClick={updatePatient} data-bs-dismiss="modal">
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
     );
