@@ -396,7 +396,6 @@ function Patientinfo() {
                                             <div class="col">Column</div>
                                             <div class="col">Column</div>
                                             <div class="col">Column</div>
-                                            <div class="col">Column</div>
                                         </div>
                                     </div>
                                 </div>
