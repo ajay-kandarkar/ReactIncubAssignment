@@ -18,7 +18,6 @@ function Patientinfo() {
         mobile_No: "",
         countryId: "",
         doctorId:"",
-        isCheck: 1,
     });
     useEffect(() => {
         axios.get('http://localhost:8080/get-allpatient-details')
@@ -59,7 +58,6 @@ function Patientinfo() {
                 Address: patientInfo.address,
                 Note: patientInfo.note,
                 Mobile_No: patientInfo.mobile_No,
-                IsCheck:patientInfo.isCheck,
             };
             axios.put(`http://localhost:8080/update-patient-details/${currentPatientId}`, updatedPatient)
                 .then(response => {
