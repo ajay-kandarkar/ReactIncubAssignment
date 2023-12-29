@@ -41,7 +41,6 @@ function Patientinfo() {
             address: patientDetails[index].Address,
             note: patientDetails[index].Note,
             mobile_No: patientDetails[index].Mobile_No,
-            isCheck:patientDetails[index].IsCheck
         });
     };
     const updatePatient = () => {
