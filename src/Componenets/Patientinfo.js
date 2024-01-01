@@ -197,7 +197,7 @@ function Patientinfo() {
                     </div>
                 </div>
                 <div className="modal fade" id="PatientDetailedit" tabIndex="-1" aria-labelledby="PatientDetaileditLabel" aria-hidden="true">
-                    <div className="m-5 modal-dialog  p-5">
+                    <div className="modal-dialog modal-xl">
                         <div className="modal-content ">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="PatientDetaileditLabel">
