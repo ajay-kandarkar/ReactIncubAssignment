@@ -225,14 +225,14 @@ function PatientScreen() {
                                     </div>
                                     <div className="card-body">
                                         <div className="d-flex justify-content-between mb-3">
-                                            <div>
+                                            <div className="col-5">
                                                 <label name="inputName" className="form-label">Name <span style={{ color: 'red' }}>*</span></label>
                                                 <div>
                                                     <input type="text" id="inputName" name="Name" className="form-control" onChange={(e) => handleInputChange("name", e.target.value)} value={patientDetails.name} required placeholder="Enter Name" />
                                                     {errors.name && <p className="text-danger">{errors.name} </p>}
                                                 </div>
                                             </div>
-                                            <div>
+                                            <div className="col-5">
                                                 <label name="inputEmail" className="form-label">Email<span style={{ color: 'red' }}> *</span></label>
                                                 <input type="email" className="form-control" id="inputEmail" autoComplete="off" onChange={(e) => handleInputChange("email", e.target.value)} required placeholder="Enter email" name="Email" value={patientDetails.email} />
                                                 {errors.email && <p className="text-danger">{errors.email} </p>}
@@ -273,7 +273,7 @@ function PatientScreen() {
                                                 </div>
                                                 {errors.gender && <p className="text-danger">{errors.gender}</p>}
                                             </fieldset>
-                                            <div  >
+                                            <div className="col-5">
                                                 <label name="inputdate" className="col-form-label">DOB<span style={{ color: 'red' }}>*</span></label>
                                                 <div >
                                                     <input type="Date" className="form-control" id="inputdate" name="DOB" value={patientDetails.DOB} onChange={(e) => handleInputChange("DOB", e.target.value)} required />
@@ -281,9 +281,9 @@ function PatientScreen() {
                                                 {errors.DOB && <p className="text-danger">{errors.DOB} </p>}
                                             </div>
                                         </div>
-                                        <div className="d-flex justify-content-between mb-2 grid">
+                                        <div className="d-flex justify-content-between ">
 
-                                            <div className="g-col-6 " >
+                                            <div className="col-5">
                                                 <label name="country" className="form-label">Country</label>
                                                 <select id="country" className="form-select"
                                                     value={patientDetails.country}
@@ -299,7 +299,7 @@ function PatientScreen() {
                                                 </select>
                                             </div>
 
-                                            <div className="g-col-6 ">
+                                            <div className="col-5">
                                                 <label name="State" className="form-label">State</label>
                                                 <select id="State" className="form-select"
                                                     value={patientDetails.state}
@@ -313,7 +313,9 @@ function PatientScreen() {
                                                     }
                                                 </select>
                                             </div>
-                                            <div className="g-col-6">
+                                        </div>
+                                        <div className="d-flex justify-content-between ">
+                                            <div className="my-3">
                                                 <label for="doctor" className="form-label">
                                                     Doctors
                                                 </label>
@@ -330,19 +332,8 @@ function PatientScreen() {
                                                     isSearchable={true}
                                                 />
                                             </div>
-                                        </div>
-                                        <div className="mx-3">
-                                            <label name="Address" className="col-form-label ">Address<span style={{ color: 'red' }}> *</span></label>
-                                            <textarea className="form-control" id="Address" value={patientDetails.address} onChange={(e) => handleInputChange("address", e.target.value)} required></textarea>
-                                            {errors.address && <p className="text-danger">{errors.address} </p>}
-                                        </div>
-                                        <div className="d-flex justify-content-between mb-3">
-                                            <div>
-                                                <label name="inputnote" className="col-form-label">Note<span style={{ color: 'red' }}> *</span></label>
-                                                <input type="text" className="form-control" id="inputnote" onChange={(e) => handleInputChange("note", e.target.value)} required />
-                                                {errors.note && <p className="text-danger">{errors.note} </p>}
-                                            </div>
-                                            <div >
+
+                                            <div className="my-3 col-5">
                                                 <label name="inputnumber" className="col-form-label">Mobile No<span style={{ color: 'red' }}> *</span></label>
                                                 <div>
                                                     <input type="phone" className="form-control" id="inputnumber" onChange={(e) => handleInputChange("mobile_No", e.target.value)} required />
@@ -350,7 +341,21 @@ function PatientScreen() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="d-flex justify-content-center">
+
+                                        <div>
+                                            <label name="Address" className="col-form-label ">Address<span style={{ color: 'red' }}> *</span></label>
+                                            <textarea className="form-control" id="Address" value={patientDetails.address} onChange={(e) => handleInputChange("address", e.target.value)} required></textarea>
+                                            {errors.address && <p className="text-danger">{errors.address} </p>}
+                                        </div>
+                                        <div >
+                                            <div className="col-5">
+                                                <label name="inputnote" className="col-form-label">Note<span style={{ color: 'red' }}> *</span></label>
+                                                <input type="text" className="form-control" id="inputnote" onChange={(e) => handleInputChange("note", e.target.value)} required />
+                                                {errors.note && <p className="text-danger">{errors.note} </p>}
+                                            </div>
+
+                                        </div>
+                                        <div className="d-flex justify-content-center p-3">
                                             <input
                                                 className="form-check-input m-1 "
                                                 type="checkbox"
@@ -360,9 +365,11 @@ function PatientScreen() {
                                                 onChange={handleCheckboxChange}
                                                 required
                                             />
-                                            <label className="form-check-label" htmlFor="termsCheckbox">
-                                                I agree to the Terms and Conditions<span style={{ color: 'red' }}>*</span>
-                                            </label>
+                                            <div>
+                                                <label className="form-check-label" htmlFor="termsCheckbox">
+                                                    I agree to the Terms and Conditions<span style={{ color: 'red' }}>*</span>
+                                                </label>
+                                            </div>
                                         </div>
                                         <div>   {errors.isChecked && <p className="text-danger d-flex justify-content-center">{errors.isChecked} </p>}</div>
                                     </div>
