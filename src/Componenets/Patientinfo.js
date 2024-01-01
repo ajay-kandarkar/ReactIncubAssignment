@@ -197,8 +197,8 @@ function Patientinfo() {
                     </div>
                 </div>
                 <div className="modal fade" id="PatientDetailedit" tabIndex="-1" aria-labelledby="PatientDetaileditLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
+                    <div className="m-5 modal-dialog  p-5">
+                        <div className="modal-content ">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="PatientDetaileditLabel">
                                     Edit Data
@@ -316,8 +316,8 @@ function Patientinfo() {
                                     </form>
                                 </div>
                             </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                            <div className='text-lg-end m-4'>
+                                <button type="button" className="btn btn-secondary m-2" data-bs-dismiss="modal">
                                     Close
                                 </button>
                                 <button type="button" className="btn btn-primary" onClick={updatePatient} data-bs-dismiss="modal">
@@ -335,7 +335,7 @@ function Patientinfo() {
                     aria-labelledby="exampleModalLabel"
                     aria-hidden="true"
                 >
-                    <div className="modal-dialog" role="document">
+                    <div className="modal-dialog modal-footer" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="exampleModalLabel">
@@ -378,6 +378,7 @@ function Patientinfo() {
 
 
                 {/* it is used for to add history of patient  */}
+                <div>
                 <div className="modal fade" id="PatientDetaileHistory" tabIndex="-1" aria-labelledby="PatientDetaileHistoryLabel" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
@@ -388,14 +389,32 @@ function Patientinfo() {
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
-                                <div className="container my-3">
+                                <div className="container my-2">
                                     <div class="container">
-                                        <div class="row row-cols-3">
-                                            <div class="col">Column</div>
-                                            <div class="col">Column</div>
-                                            <div class="col">Column</div>
-                                            <div class="col">Column</div>
-                                            <div class="col">Column</div>
+                                        <div >
+                                            <div className='d-flex'>
+                                            <div>
+                                                <label for="hospitalName">Hospital Name</label>
+                                                <input type='text' id="hospitalName"></input>
+                                            </div>
+                                            <div>
+                                            <label for="treatmentDetails">Treatment Details</label>
+                                                <input type='text' id="treatmentDetails"></input>
+                                            </div>
+                                            </div>
+
+                                            <div className='d-flex'>
+                                            <div>
+                                            <label for="fromDate" >From Date</label>
+                                                <input type='date' id="fromDate"></input>
+                                            </div>
+                                            <div>
+                                            <label for="toDate">To Date</label>
+                                                <input type='date' id="toDate"></input>
+                                            </div>
+
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -414,6 +433,7 @@ function Patientinfo() {
 
 
             </div>
+        </div>
         </div>
     );
 }
