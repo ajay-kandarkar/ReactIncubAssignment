@@ -5,9 +5,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 function Patientinfo() {
     const [patientDetails, setPatientDetails] = useState([]);
+    const [patientHistory,setPatientHistory]=useState([]);
     const [currentPatientId, setCurrentPatientId] = useState(null);
     const [searchPatient, setsearchPatient] = useState("");
     const [order, setOrder] = useState("Asc");
+    const [patientHistoryAdd,setPatientHistoryAdd]= useState({
+        hospitalName : "",
+        treatmentDetails: "",
+        formDate: "",
+        toDate : "",
+        patientId : 36
+     })
+  
+
     const [patientInfo, setPatientInfo] = useState({
         name: "",
         email: "",
@@ -18,7 +28,7 @@ function Patientinfo() {
         mobile_No: "",
         countryId: "",
         doctorId: "",
-        isCheck: 1,
+        isCheck: false,
     });
     useEffect(() => {
         axios.get('http://localhost:8080/get-allpatient-details')
@@ -29,6 +39,17 @@ function Patientinfo() {
             .catch((error) => {
                 console.error('error to get patientDetails', error);
             });
+
+             
+            axios.get('http://localhost:8080/get-patient-history')
+            .then((response) => {
+                console.log('Data of patient-History', response.data);
+               setPatientHistory(response.data);
+            })
+            .catch((error) => {
+                console.error('error to get patientDetails', error);
+            });
+
     }, []);
     const patientDetailsEdit = (index) => {
         setCurrentPatientId(patientDetails[index].Id);
@@ -43,7 +64,7 @@ function Patientinfo() {
             note: patientDetails[index].Note,
             mobile_No: patientDetails[index].Mobile_No,
             isCheck: patientDetails[index].IsCheck
-        });
+        }); 
     };
     const updatePatient = () => {
         const updatedPatientDetails = [...patientDetails];
@@ -112,6 +133,39 @@ function Patientinfo() {
         setPatientDetails(sortedData);
         setOrder(order === 'Asc' ? 'Dsc' : 'Asc');
     };
+    const patientHistoryChange = (e) =>{
+        setPatientHistoryAdd(
+            {
+                ...patientHistoryAdd,
+                [e.target.name] : e.target.value
+            }
+          )
+    }
+    const patientHistrorySubmit = (e) =>{
+        e.preventDefault();
+        axios.post('http://localhost:8080/insert-patient-history', {
+            HospitalName: patientHistoryAdd.hospitalName || "",
+            TreatmentDetails : patientHistoryAdd.treatmentDetails || "",
+            FormDate : patientHistoryAdd.formDate || "",
+            ToDate : patientHistoryAdd.toDate || "",
+            patientId :patientHistoryAdd.patientId || "",
+
+        })
+            .then((response) => {
+                console.log('Patient History : ', response.data);
+                 setPatientHistory(response.data)
+               
+            })
+            .catch((error) => {
+                console.error('Error inserting patient History', error);
+            });
+            
+        toast.success("Patient History  added successfully!!!!!", {
+            position: toast.POSITION.TOP_CENTER,
+           
+        });
+         
+    }
     return (
         <div>
             <div className="container my-5">
@@ -201,7 +255,7 @@ function Patientinfo() {
                         <div className="modal-content ">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="PatientDetaileditLabel">
-                                    Edit Data
+                                    Edit PatientDetails
                                 </h5>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
@@ -313,6 +367,60 @@ function Patientinfo() {
                                                 </button>
                                             </div>
                                         </div>
+                                             
+                                             {/* show history here here */}
+                                        <h5>Previous Treatment History</h5>
+                                        <div className='card'>
+                                        <div>
+                                        <div className='card-body'>
+                                             <div className='col-sm-12 table-responsive'>
+                                    <table className="table">
+                                <thead>
+                                <tr>
+                                    <th className='cursor-pointer pointer'>
+                                      Hospital Name
+                                    </th>
+                                    <th className='cursor-pointer pointer'>
+                                      Treatment Details
+                                    </th>
+                                    <th className='cursor-pointer pointer' >
+                                      Form Date
+                                    </th>
+                                    <th className='cursor-pointer pointer'>
+                                       To Date
+                                    </th>
+                                    <th className='text-center'> Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                   {   
+                                      patientHistory && patientHistory.map((patientHistory, index) => (
+                                        <tr key={patientHistory.Id}>
+                                            <td>{patientHistory.HospitalName}</td>
+                                            <td>{patientHistory.TreatmentDetails}</td>
+                                            <td>{patientHistory.FormDate}</td>
+                                            <td>{patientHistory.ToDate}</td>
+                                            <td className='text-center'>
+                                                <button
+                                                    className="btn btn-primary mx-2"
+                                                    
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    className="btn btn-danger mx-2" 
+                                                >
+                                                    Delete   
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                                            </div>
+                                            </div>
+                                             </div>
+                                             </div>    
                                     </form>
                                 </div>
                             </div>
@@ -376,64 +484,59 @@ function Patientinfo() {
                     </div>
                 </div>
 
-
                 {/* it is used for to add history of patient  */}
                 <div>
-                <div className="modal fade" id="PatientDetaileHistory" tabIndex="-1" aria-labelledby="PatientDetaileHistoryLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="PatientDetaileHistoryLabel">
-                                    Add Treatment History
-                                </h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="container my-2">
-                                    <div class="container">
-                                        <div >
-                                            <div className='d-flex'>
-                                            <div>
-                                                <label for="hospitalName">Hospital Name</label>
-                                                <input type='text' id="hospitalName"></input>
-                                            </div>
-                                            <div>
-                                            <label for="treatmentDetails">Treatment Details</label>
-                                                <input type='text' id="treatmentDetails"></input>
-                                            </div>
-                                            </div>
-
-                                            <div className='d-flex'>
-                                            <div>
-                                            <label for="fromDate" >From Date</label>
-                                                <input type='date' id="fromDate"></input>
-                                            </div>
-                                            <div>
-                                            <label for="toDate">To Date</label>
-                                                <input type='date' id="toDate"></input>
-                                            </div>
-
-                                            </div>
-
+                    <div className="modal fade" id="PatientDetaileHistory" tabIndex="-1" aria-labelledby="PatientDetaileHistoryLabel" aria-hidden="true">
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="PatientDetaileHistoryLabel">
+                                        Add Treatment History
+                                    </h5>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="container my-2">
+                                        <div class="container">
+                                            <form>
+                                                <div className='d-flex justify-content-between'>
+                                                <div class="mb-3">
+                                                    <label for="hospitalName" class="form-label" >Hospital Name</label>
+                                                    <input type="text" class="form-control" id="hospitalName" name="hospitalName" value={patientHistoryAdd.hospitalName}  onChange={patientHistoryChange}/>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="treatmentDetails" class="form-label">Treatment Details</label>
+                                                    <input type="text" class="form-control" id="treatmentDetails"  name="treatmentDetails" value={patientHistoryAdd.treatmentDetails}  onChange={patientHistoryChange}/>
+                                                </div>
+                                                </div>
+                                                
+                                                <div className='d-flex justify-content-between'>
+                                                <div class="mb-3">
+                                                    <label for="formDate" class="form-label">From Date</label>
+                                                    <input type="date" class="form-control" id="formDate"  name="formDate"  value={patientHistoryAdd.formDate} onChange={patientHistoryChange}/>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="toDate" class="form-label">To Date</label>
+                                                    <input type="date" class="form-control" id="toDate" name='toDate'  value={patientHistoryAdd.toDate} onChange={patientHistoryChange}/>
+                                                </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                                    Close
-                                </button>
-                                <button type="button" className="btn btn-primary" onClick={updatePatient} data-bs-dismiss="modal">
-                                    Update
-                                </button>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={patientHistrorySubmit}>
+                                        Add
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
             </div>
-        </div>
         </div>
     );
 }
