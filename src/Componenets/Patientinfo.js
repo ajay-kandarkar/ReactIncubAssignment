@@ -5,18 +5,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 function Patientinfo() {
     const [patientDetails, setPatientDetails] = useState([]);
-    const [patientHistory,setPatientHistory]=useState([]);
+    const [patientHistory, setPatientHistory] = useState([]);
     const [currentPatientId, setCurrentPatientId] = useState(null);
     const [searchPatient, setsearchPatient] = useState("");
+    const[currentPatientHistoryId,setCurrentPatientHistoryId] = useState(null);
     const [order, setOrder] = useState("Asc");
-    const [patientHistoryAdd,setPatientHistoryAdd]= useState({
-        hospitalName : "",
+
+    const [patientHistoryAdd, setPatientHistoryAdd] = useState({
+        hospitalName: "",
         treatmentDetails: "",
         formDate: "",
-        toDate : "",
-        patientId : 36
-     })
-  
+        toDate: "",
+        patientId: ""
+    })
+
 
     const [patientInfo, setPatientInfo] = useState({
         name: "",
@@ -28,10 +30,11 @@ function Patientinfo() {
         mobile_No: "",
         countryId: "",
         doctorId: "",
-        isCheck: false,
+        isCheck: true,
     });
+
     useEffect(() => {
-        axios.get('http://localhost:8080/get-allpatient-details')
+        axios.get(`${process.env.REACT_APP_BASE_URL}/get-allpatient-details`)
             .then((response) => {
                 console.log('Data of get-patient', response.data);
                 setPatientDetails(response.data);
@@ -40,18 +43,20 @@ function Patientinfo() {
                 console.error('error to get patientDetails', error);
             });
 
-             
-            axios.get('http://localhost:8080/get-patient-history')
+
+        axios.get(`${process.env.REACT_APP_BASE_URL}/get-patient-history`)
             .then((response) => {
                 console.log('Data of patient-History', response.data);
-               setPatientHistory(response.data);
+                setPatientHistory(response.data);
             })
             .catch((error) => {
                 console.error('error to get patientDetails', error);
             });
 
     }, []);
+
     const patientDetailsEdit = (index) => {
+
         setCurrentPatientId(patientDetails[index].Id);
         setPatientInfo({
             name: patientDetails[index].Name,
@@ -64,8 +69,10 @@ function Patientinfo() {
             note: patientDetails[index].Note,
             mobile_No: patientDetails[index].Mobile_No,
             isCheck: patientDetails[index].IsCheck
-        }); 
+        });
     };
+
+
     const updatePatient = () => {
         const updatedPatientDetails = [...patientDetails];
         const existingPatient = updatedPatientDetails[currentPatientId];
@@ -82,7 +89,7 @@ function Patientinfo() {
             Mobile_No: patientInfo.mobile_No,
             IsCheck: patientInfo.isCheck,
         };
-        axios.put(`http://localhost:8080/update-patient-details/${currentPatientId}`, updatedPatient)
+        axios.put(`${process.env.REACT_APP_BASE_URL}/update-patient-details/${currentPatientId}`, updatedPatient)
             .then(response => {
                 window.location.reload();
                 toast.success("Successfully updated patient information", {
@@ -98,12 +105,16 @@ function Patientinfo() {
                 });
             });
     };
+
+    
     const PatientDetailsDelete = (patientId) => {
         setCurrentPatientId(patientId);
     };
+
+
     const confirmDelete = () => {
         const idToDeleted = currentPatientId;
-        axios.delete(`http://localhost:8080/delete-patient/${idToDeleted}`)
+        axios.delete(`${process.env.REACT_APP_BASE_URL}/delete-patient/${idToDeleted}`)
             .then(() => {
                 const updatedPatientDetails = patientDetails.filter(
                     (_, patientId) => patientId !== idToDeleted
@@ -122,10 +133,13 @@ function Patientinfo() {
                 });
             });
     };
+
     const navigate = useNavigate();
+
     const handleCloseDeleteConfirmation = () => {
         setCurrentPatientId(null);
     };
+
     const sorting = (patienetCol) => {
         const sortedData = [...patientDetails].sort((a, b) =>
             order === 'Asc' ? (a[patienetCol] > b[patienetCol] ? 1 : -1) : (a[patienetCol] < b[patienetCol] ? 1 : -1)
@@ -133,39 +147,89 @@ function Patientinfo() {
         setPatientDetails(sortedData);
         setOrder(order === 'Asc' ? 'Dsc' : 'Asc');
     };
-    const patientHistoryChange = (e) =>{
+
+    const patientHistoryChange = (e) => {
         setPatientHistoryAdd(
             {
                 ...patientHistoryAdd,
-                [e.target.name] : e.target.value
+                [e.target.name]: e.target.value
             }
-          )
+        )
     }
-    const patientHistrorySubmit = (e) =>{
-        e.preventDefault();
-        axios.post('http://localhost:8080/insert-patient-history', {
-            HospitalName: patientHistoryAdd.hospitalName || "",
-            TreatmentDetails : patientHistoryAdd.treatmentDetails || "",
-            FormDate : patientHistoryAdd.formDate || "",
-            ToDate : patientHistoryAdd.toDate || "",
-            patientId :patientHistoryAdd.patientId || "",
 
-        })
-            .then((response) => {
-                console.log('Patient History : ', response.data);
-                 setPatientHistory(response.data)
-               
-            })
-            .catch((error) => {
-                console.error('Error inserting patient History', error);
+    const deletePatientHistory = async (historyId) => {
+        try {
+            await axios.delete(`${process.env.REACT_APP_BASE_URL}/delete-treatment-history/${historyId}`);
+            toast.success('Patient history deleted successfully!', {
+                position: toast.POSITION.TOP_CENTER,
             });
-            
-        toast.success("Patient History  added successfully!!!!!", {
-            position: toast.POSITION.TOP_CENTER,
-           
-        });
-         
+            const updatedPatientHistoryResponse = await axios.get(`${process.env.REACT_APP_BASE_URL}/get-patient-history`);
+            setPatientHistory(updatedPatientHistoryResponse.data);
+        } catch (error) {
+            toast.error('Failed to delete patient history. Please try again.', {
+                position: toast.POSITION.TOP_CENTER,
+            });
+        }
+    };
+
+
+    const patientHistrorySubmit = async (e) => {
+        try {
+            await axios.post(`${process.env.REACT_APP_BASE_URL}/insert-patient-history`, {
+                // HospitalName: patientHistoryAdd.hospitalName || "",
+                // TreatmentDetails: patientHistoryAdd.treatmentDetails || "",
+                // FormDate: patientHistoryAdd.formDate || "",
+                // ToDate: patientHistoryAdd.toDate || "",
+                // patientId: patientHistoryAdd.patientId || ""
+
+            })
+            const updatedPatientHistoryResponse = await axios.get(`${process.env.REACT_APP_BASE_URL}/get-patient-history`);
+            setPatientHistory(updatedPatientHistoryResponse.data);
+            toast.success("Patient History  added successfully!!!!!", {
+                position: toast.POSITION.TOP_CENTER
+            });
+
+            setPatientHistoryAdd({
+                hospitalName: "",
+                treatmentDetails: "",
+                formDate: "",
+                toDate: "",
+            });
+
+        } catch (error) {
+            console.error('Error of adding patient History:', error);
+            toast.error('Fail to add Patienet', {
+                position: toast.POSITION.TOP_CENTER,
+            });
+        }
     }
+
+
+    const patientHistoryEdit = (index) =>{
+        setCurrentPatientHistoryId(patientHistory[index].Id);
+         setPatientHistoryAdd({
+            hospitalName: patientHistory[index].HospitalName,
+            treatmentDetails:patientDetails[index].TreatmentDetails,
+            formDate: patientDetails[index].FormDate,
+            toDate: patientDetails[index].toDate,
+            patientId: patientDetails[index].patientId
+        });
+        console.log("Patient History add",patientHistoryAdd);
+    }
+
+    // const updatePatientHistory = async (id, index) => {
+    //     setCurrentPatientId(patientDetails[index].Id);
+    //     setPatientHistory({
+    //         hospitalName: patientHistory[index].HospitalName,
+    //         treatmentDetails:patientHistory[index].TreatmentDetails,
+    //         formDate:patientHistory[index].FormDate,
+    //         toDate: patientHistory[index].toDate,
+    //         patientId: patientHistory[index].Id
+    //     });
+       
+    // }
+
+
     return (
         <div>
             <div className="container my-5">
@@ -367,60 +431,62 @@ function Patientinfo() {
                                                 </button>
                                             </div>
                                         </div>
-                                             
-                                             {/* show history here here */}
+
+                                        {/* show history here here */}
                                         <h5>Previous Treatment History</h5>
                                         <div className='card'>
-                                        <div>
-                                        <div className='card-body'>
-                                             <div className='col-sm-12 table-responsive'>
-                                    <table className="table">
-                                <thead>
-                                <tr>
-                                    <th className='cursor-pointer pointer'>
-                                      Hospital Name
-                                    </th>
-                                    <th className='cursor-pointer pointer'>
-                                      Treatment Details
-                                    </th>
-                                    <th className='cursor-pointer pointer' >
-                                      Form Date
-                                    </th>
-                                    <th className='cursor-pointer pointer'>
-                                       To Date
-                                    </th>
-                                    <th className='text-center'> Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                   {   
-                                      patientHistory && patientHistory.map((patientHistory, index) => (
-                                        <tr key={patientHistory.Id}>
-                                            <td>{patientHistory.HospitalName}</td>
-                                            <td>{patientHistory.TreatmentDetails}</td>
-                                            <td>{patientHistory.FormDate}</td>
-                                            <td>{patientHistory.ToDate}</td>
-                                            <td className='text-center'>
-                                                <button
-                                                    className="btn btn-primary mx-2"
-                                                    
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    className="btn btn-danger mx-2" 
-                                                >
-                                                    Delete   
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                            </tbody>
-                        </table>
+                                            <div>
+                                                <div className='card-body'>
+                                                    <div className='col-sm-12 table-responsive'>
+                                                        <table className="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th className='cursor-pointer pointer'>
+                                                                        Hospital Name
+                                                                    </th>
+                                                                    <th className='cursor-pointer pointer'>
+                                                                        Treatment Details
+                                                                    </th>
+                                                                    <th className='cursor-pointer pointer' >
+                                                                        Form Date
+                                                                    </th>
+                                                                    <th className='cursor-pointer pointer'>
+                                                                        To Date
+                                                                    </th>
+                                                                    <th className='text-center'> Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {
+                                                                    patientHistory && patientHistory.map((patientHistory, index) => (
+                                                                        <tr key={patientHistory.Id}>
+                                                                            <td>{patientHistory.HospitalName}</td>
+                                                                            <td>{patientHistory.TreatmentDetails}</td>
+                                                                            <td>{patientHistory.FormDate}</td>
+                                                                            <td>{patientHistory.ToDate}</td>
+                                                                            <td className='text-center'>
+                                                                                <button
+                                                                                    className="btn btn-primary mx-2"
+                                                                                    data-bs-toggle="modal" data-bs-target="#patientHistory"
+                                                                                   onClick={() => patientHistoryEdit(index)}
+                                                                                >
+                                                                                    Edit
+                                                                                </button>
+                                                                                <button
+                                                                                    className="btn btn-danger mx-2"
+                                                                                    onClick={() => deletePatientHistory(patientHistory.Id)}
+                                                                                >
+                                                                                    Delete
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            </div>
-                                             </div>
-                                             </div>    
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -500,25 +566,25 @@ function Patientinfo() {
                                         <div class="container">
                                             <form>
                                                 <div className='d-flex justify-content-between'>
-                                                <div class="mb-3">
-                                                    <label for="hospitalName" class="form-label" >Hospital Name</label>
-                                                    <input type="text" class="form-control" id="hospitalName" name="hospitalName" value={patientHistoryAdd.hospitalName}  onChange={patientHistoryChange}/>
+                                                    <div class="mb-3">
+                                                        <label for="hospitalName" class="form-label" >Hospital Name</label>
+                                                        <input type="text" class="form-control" id="hospitalName" name="hospitalName" value={patientHistoryAdd.hospitalName} onChange={patientHistoryChange} />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="treatmentDetails" class="form-label">Treatment Details</label>
+                                                        <input type="text" class="form-control" id="treatmentDetails" name="treatmentDetails" value={patientHistoryAdd.treatmentDetails} onChange={patientHistoryChange} />
+                                                    </div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="treatmentDetails" class="form-label">Treatment Details</label>
-                                                    <input type="text" class="form-control" id="treatmentDetails"  name="treatmentDetails" value={patientHistoryAdd.treatmentDetails}  onChange={patientHistoryChange}/>
-                                                </div>
-                                                </div>
-                                                
+
                                                 <div className='d-flex justify-content-between'>
-                                                <div class="mb-3">
-                                                    <label for="formDate" class="form-label">From Date</label>
-                                                    <input type="date" class="form-control" id="formDate"  name="formDate"  value={patientHistoryAdd.formDate} onChange={patientHistoryChange}/>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="toDate" class="form-label">To Date</label>
-                                                    <input type="date" class="form-control" id="toDate" name='toDate'  value={patientHistoryAdd.toDate} onChange={patientHistoryChange}/>
-                                                </div>
+                                                    <div class="mb-3">
+                                                        <label for="formDate" class="form-label">From Date</label>
+                                                        <input type="date" class="form-control" id="formDate" name="formDate" value={patientHistoryAdd.formDate} onChange={patientHistoryChange} />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="toDate" class="form-label">To Date</label>
+                                                        <input type="date" class="form-control" id="toDate" name='toDate' value={patientHistoryAdd.toDate} onChange={patientHistoryChange} />
+                                                    </div>
                                                 </div>
                                             </form>
                                         </div>
@@ -537,6 +603,56 @@ function Patientinfo() {
                     </div>
                 </div>
             </div>
+
+
+            {/* update Patient History Modal */}
+
+
+            <div class="modal fade" id="patientHistory" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Edit patient History</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div className="container my-2">
+                                <div class="container">
+                                    <form>
+                                        <div className='d-flex justify-content-between'>
+                                            <div class="mb-3">
+                                                <label for="hospitalName" class="form-label" >Hospital Name</label>
+                                                <input type="text" class="form-control" id="hospitalName" name="hospitalName" value={patientHistoryAdd.hospitalName} onChange={patientHistoryChange} />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="treatmentDetails" class="form-label">Treatment Details</label>
+                                                <input type="text" class="form-control" id="treatmentDetails" name="treatmentDetails" value={patientHistoryAdd.treatmentDetails} onChange={patientHistoryChange} />
+                                            </div>
+                                        </div>
+
+                                        <div className='d-flex justify-content-between'>
+                                            <div class="mb-3">
+                                                <label for="formDate" class="form-label">From Date</label>
+                                                <input type="date" class="form-control" id="formDate" name="formDate" value={patientHistoryAdd.formDate} onChange={patientHistoryChange} />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="toDate" class="form-label">To Date</label>
+                                                <input type="date" class="form-control" id="toDate" name='toDate' value={patientHistoryAdd.toDate} onChange={patientHistoryChange} />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     );
 }

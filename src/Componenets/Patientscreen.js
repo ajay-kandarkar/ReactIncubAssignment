@@ -37,7 +37,7 @@ function PatientScreen() {
         isChecked: false
     });
     useEffect(() => {
-        axios.get('http://localhost:8080/get-doctors')
+        axios.get(`${process.env.REACT_APP_BASE_URL}/get-doctors`)
             .then((response) => {
                 console.log('Doctors from useEffect', response.data);
                 setDoctor(response.data);
@@ -45,7 +45,7 @@ function PatientScreen() {
             .catch((error) => {
                 console.error('Error fetching doctor data', error);
             });
-        axios.get('http://localhost:8080/get-country')
+        axios.get(`${process.env.REACT_APP_BASE_URL}/get-country`)
             .then((response) => {
                 console.log('Country data', response.data);
                 setCountry(response.data);
@@ -56,7 +56,7 @@ function PatientScreen() {
     }, []);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/state/${Country_Id}`)
+        axios.get(`${process.env.REACT_APP_BASE_URL}/state/${Country_Id}`)
             .then((response) => {
                 setStates(response.data);
                 console.log("State is: ", response.data);
@@ -187,7 +187,7 @@ function PatientScreen() {
             setErrors(validationErrors);
             return;
         }
-        axios.post('http://localhost:8080/insert-patient-details', {
+        axios.post(`${process.env.REACT_APP_BASE_URL}/insert-patient-details`, {
             Name: patientDetails.name || "",
             Email: patientDetails.email || "",
             Gender: patientDetails.gender || "",

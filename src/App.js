@@ -1,15 +1,15 @@
 import './App.css';
-import Patientinfo from './Componenets/Patientinfo';
-import Patientscreen from './Componenets/Patientscreen';
+import PatientInfo from './Componenets/PatientInfo';
+import PatientScreen from './Componenets/PatientScreen';
 import { Route,Routes } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 function App() {
   return (
     <>
          <ToastContainer/>
      <Routes>
-      <Route path="/patientScreen" element={<Patientscreen/>}></Route>
-        <Route path="/" element={<Patientinfo/>}></Route>
+      <Route path="/patientScreen" element={<PatientScreen/>}></Route>
+        <Route path="/" element={<PatientInfo/>}></Route>
       </Routes> 
 
     </>
