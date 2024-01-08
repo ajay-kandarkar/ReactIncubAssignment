@@ -65,6 +65,7 @@ function PatientScreen() {
                 console.error('Error fetching state data', error);
             });
     }, [Country_Id]);
+
     const handleCountryChange = (event) => {
         const selectedCountryId = event.target.value;
         setCountryId(selectedCountryId);
@@ -75,6 +76,7 @@ function PatientScreen() {
             state: "",
         });
     };
+
     const handleInputChange = (fieldName, value) => {
         setPatientDetails({
             ...patientDetails,
@@ -138,6 +140,7 @@ function PatientScreen() {
                 break;
         }
     };
+
     const handleCheckboxChange = () => {
         setPatientDetails((prevPatientData) => ({
             ...prevPatientData,
@@ -149,6 +152,7 @@ function PatientScreen() {
             return updatedErrors;
         });
     };
+    
     const submitPatientDetails = () => {
         if (!patientDetails.name.trim()) {
             setErrors((prevErrors) => ({

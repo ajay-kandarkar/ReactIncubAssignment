@@ -8,15 +8,16 @@ function Patientinfo() {
     const [patientHistory, setPatientHistory] = useState([]);
     const [currentPatientId, setCurrentPatientId] = useState(null);
     const [searchPatient, setsearchPatient] = useState("");
-    const[currentPatientHistoryId,setCurrentPatientHistoryId] = useState(null);
+    const [currentPatientHistoryId, setCurrentPatientHistoryId] = useState(null);
     const [order, setOrder] = useState("Asc");
+    const [updateStatus, setUpdateStatus] = useState(false);
 
     const [patientHistoryAdd, setPatientHistoryAdd] = useState({
         hospitalName: "",
         treatmentDetails: "",
-        formDate: "",
+        forDate: "",
         toDate: "",
-        patientId: ""
+        patientId: 0,
     })
 
 
@@ -30,8 +31,10 @@ function Patientinfo() {
         mobile_No: "",
         countryId: "",
         doctorId: "",
-        isCheck: true,
+        isCheck: false,
     });
+
+
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_BASE_URL}/get-allpatient-details`)
@@ -43,7 +46,6 @@ function Patientinfo() {
                 console.error('error to get patientDetails', error);
             });
 
-
         axios.get(`${process.env.REACT_APP_BASE_URL}/get-patient-history`)
             .then((response) => {
                 console.log('Data of patient-History', response.data);
@@ -53,10 +55,14 @@ function Patientinfo() {
                 console.error('error to get patientDetails', error);
             });
 
-    }, []);
+        setUpdateStatus(false);
+
+    }, [updateStatus]);
+
+
+
 
     const patientDetailsEdit = (index) => {
-
         setCurrentPatientId(patientDetails[index].Id);
         setPatientInfo({
             name: patientDetails[index].Name,
@@ -89,14 +95,16 @@ function Patientinfo() {
             Mobile_No: patientInfo.mobile_No,
             IsCheck: patientInfo.isCheck,
         };
+
         axios.put(`${process.env.REACT_APP_BASE_URL}/update-patient-details/${currentPatientId}`, updatedPatient)
             .then(response => {
-                window.location.reload();
+
                 toast.success("Successfully updated patient information", {
                     position: toast.POSITION.TOP_CENTER,
                 });
                 updatedPatientDetails[currentPatientId] = response.data;
                 setPatientDetails(updatedPatientDetails);
+                setUpdateStatus(true);
             })
             .catch(error => {
                 console.error('Error updating patient:', error);
@@ -104,9 +112,10 @@ function Patientinfo() {
                     position: toast.POSITION.TOP_CENTER,
                 });
             });
+
     };
 
-    
+
     const PatientDetailsDelete = (patientId) => {
         setCurrentPatientId(patientId);
     };
@@ -120,11 +129,12 @@ function Patientinfo() {
                     (_, patientId) => patientId !== idToDeleted
                 );
                 setPatientDetails(updatedPatientDetails);
-                window.location.reload();
                 handleCloseDeleteConfirmation();
                 toast.error("Patient Deleted  Successfully!!!", {
                     position: toast.POSITION.TOP_CENTER,
+
                 });
+
             })
             .catch((error) => {
                 console.error('Error deleting patient:', error);
@@ -132,7 +142,10 @@ function Patientinfo() {
                     position: toast.POSITION.TOP_CENTER,
                 });
             });
+
+        setUpdateStatus(true);
     };
+
 
     const navigate = useNavigate();
 
@@ -148,6 +161,8 @@ function Patientinfo() {
         setOrder(order === 'Asc' ? 'Dsc' : 'Asc');
     };
 
+
+
     const patientHistoryChange = (e) => {
         setPatientHistoryAdd(
             {
@@ -155,7 +170,9 @@ function Patientinfo() {
                 [e.target.name]: e.target.value
             }
         )
+
     }
+
 
     const deletePatientHistory = async (historyId) => {
         try {
@@ -173,27 +190,21 @@ function Patientinfo() {
     };
 
 
+
     const patientHistrorySubmit = async (e) => {
         try {
             await axios.post(`${process.env.REACT_APP_BASE_URL}/insert-patient-history`, {
-                // HospitalName: patientHistoryAdd.hospitalName || "",
-                // TreatmentDetails: patientHistoryAdd.treatmentDetails || "",
-                // FormDate: patientHistoryAdd.formDate || "",
-                // ToDate: patientHistoryAdd.toDate || "",
-                // patientId: patientHistoryAdd.patientId || ""
+                HospitalName: patientHistoryAdd.hospitalName || "",
+                TreatmentDetails: patientHistoryAdd.treatmentDetails || "",
+                FormDate: patientHistoryAdd.forDate || "",
+                ToDate: patientHistoryAdd.toDate || "",
+                patientId: currentPatientId,
 
             })
             const updatedPatientHistoryResponse = await axios.get(`${process.env.REACT_APP_BASE_URL}/get-patient-history`);
             setPatientHistory(updatedPatientHistoryResponse.data);
             toast.success("Patient History  added successfully!!!!!", {
                 position: toast.POSITION.TOP_CENTER
-            });
-
-            setPatientHistoryAdd({
-                hospitalName: "",
-                treatmentDetails: "",
-                formDate: "",
-                toDate: "",
             });
 
         } catch (error) {
@@ -205,29 +216,53 @@ function Patientinfo() {
     }
 
 
-    const patientHistoryEdit = (index) =>{
+
+    const patientHistoryEdit = (index) => {
+
+
         setCurrentPatientHistoryId(patientHistory[index].Id);
-         setPatientHistoryAdd({
+
+        setPatientHistoryAdd({
             hospitalName: patientHistory[index].HospitalName,
-            treatmentDetails:patientDetails[index].TreatmentDetails,
-            formDate: patientDetails[index].FormDate,
-            toDate: patientDetails[index].toDate,
+            treatmentDetails: patientDetails[index].TreatmentDetails,
+            forDate: patientDetails[index].ForDate,
+            toDate: patientDetails[index].ToDate,
             patientId: patientDetails[index].patientId
         });
-        console.log("Patient History add",patientHistoryAdd);
+        console.log("Patient History add", patientHistoryAdd);
     }
 
-    // const updatePatientHistory = async (id, index) => {
-    //     setCurrentPatientId(patientDetails[index].Id);
-    //     setPatientHistory({
-    //         hospitalName: patientHistory[index].HospitalName,
-    //         treatmentDetails:patientHistory[index].TreatmentDetails,
-    //         formDate:patientHistory[index].FormDate,
-    //         toDate: patientHistory[index].toDate,
-    //         patientId: patientHistory[index].Id
-    //     });
-       
-    // }
+
+    const updatePatientHistory = async () => {
+        try {
+            const updatedPatientHistory = [...patientHistory];
+            const existingPatientHistory = updatedPatientHistory[currentPatientHistoryId];
+
+            const updatedHistory = {
+                ...existingPatientHistory,
+                HospitalName: patientHistoryAdd?.hospitalName,
+                TreatmentDetails: patientHistoryAdd?.treatmentDetails,
+                ForDate: patientHistoryAdd?.forDate,
+                ToDate: patientHistoryAdd?.toDate,
+                patientId: patientHistoryAdd.patientId,
+            };
+
+            const response = await axios.put(`${process.env.REACT_APP_BASE_URL}/update-patient-history/${currentPatientHistoryId}`, updatedHistory);
+
+            updatedPatientHistory[currentPatientHistoryId] = response.data;
+            setPatientHistory(updatedPatientHistory);
+
+            toast.success("Successfully updated patientHistory information", {
+                position: toast.POSITION.TOP_CENTER,
+            });
+
+        } catch (error) {
+            console.error('Error updating patientHistory:', error);
+            toast.error("Failed to update patientHistory. Please try again.", {
+                position: toast.POSITION.TOP_CENTER,
+            });
+        }
+    };
 
 
     return (
@@ -458,29 +493,34 @@ function Patientinfo() {
                                                             </thead>
                                                             <tbody>
                                                                 {
-                                                                    patientHistory && patientHistory.map((patientHistory, index) => (
-                                                                        <tr key={patientHistory.Id}>
-                                                                            <td>{patientHistory.HospitalName}</td>
-                                                                            <td>{patientHistory.TreatmentDetails}</td>
-                                                                            <td>{patientHistory.FormDate}</td>
-                                                                            <td>{patientHistory.ToDate}</td>
-                                                                            <td className='text-center'>
-                                                                                <button
-                                                                                    className="btn btn-primary mx-2"
-                                                                                    data-bs-toggle="modal" data-bs-target="#patientHistory"
-                                                                                   onClick={() => patientHistoryEdit(index)}
-                                                                                >
-                                                                                    Edit
-                                                                                </button>
-                                                                                <button
-                                                                                    className="btn btn-danger mx-2"
-                                                                                    onClick={() => deletePatientHistory(patientHistory.Id)}
-                                                                                >
-                                                                                    Delete
-                                                                                </button>
-                                                                            </td>
-                                                                        </tr>
-                                                                    ))}
+                                                                    patientHistory &&
+                                                                    patientHistory
+                                                                        .filter(patient => patient.patientId === currentPatientId)
+                                                                        .map((patientHistory, index) => (
+                                                                            <tr key={patientHistory.Id}>
+                                                                                <td>{patientHistory.HospitalName}</td>
+                                                                                <td>{patientHistory.TreatmentDetails}</td>
+                                                                                <td>{patientHistory.FormDate}</td>
+                                                                                <td>{patientHistory.ToDate}</td>
+                                                                                <td className='text-center'>
+                                                                                    <button
+                                                                                        className="btn btn-primary mx-2"
+                                                                                        data-bs-toggle="modal" data-bs-target="#patientHistory"
+                                                                                        onClick={() => patientHistoryEdit(index)}
+                                                                                    >
+                                                                                        Edit
+                                                                                    </button>
+                                                                                    <button
+                                                                                        className="btn btn-danger mx-2"
+                                                                                        onClick={() => deletePatientHistory(patientHistory.Id)}
+                                                                                    >
+                                                                                        Delete
+                                                                                    </button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        ))
+                                                                }
+
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -569,6 +609,7 @@ function Patientinfo() {
                                                     <div class="mb-3">
                                                         <label for="hospitalName" class="form-label" >Hospital Name</label>
                                                         <input type="text" class="form-control" id="hospitalName" name="hospitalName" value={patientHistoryAdd.hospitalName} onChange={patientHistoryChange} />
+
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="treatmentDetails" class="form-label">Treatment Details</label>
@@ -578,8 +619,8 @@ function Patientinfo() {
 
                                                 <div className='d-flex justify-content-between'>
                                                     <div class="mb-3">
-                                                        <label for="formDate" class="form-label">From Date</label>
-                                                        <input type="date" class="form-control" id="formDate" name="formDate" value={patientHistoryAdd.formDate} onChange={patientHistoryChange} />
+                                                        <label for="forDate" class="form-label">From Date</label>
+                                                        <input type="date" class="form-control" id="forDate" name="forDate" value={patientHistoryAdd.forDate} onChange={patientHistoryChange} />
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="toDate" class="form-label">To Date</label>
@@ -632,8 +673,8 @@ function Patientinfo() {
 
                                         <div className='d-flex justify-content-between'>
                                             <div class="mb-3">
-                                                <label for="formDate" class="form-label">From Date</label>
-                                                <input type="date" class="form-control" id="formDate" name="formDate" value={patientHistoryAdd.formDate} onChange={patientHistoryChange} />
+                                                <label for="forDate" class="form-label">From Date</label>
+                                                <input type="date" class="form-control" id="forDate" name="forDate" value={patientHistoryAdd.forDate} onChange={patientHistoryChange} />
                                             </div>
                                             <div class="mb-3">
                                                 <label for="toDate" class="form-label">To Date</label>
@@ -647,7 +688,7 @@ function Patientinfo() {
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">update</button>
+                            <button type="button" class="btn btn-primary" onClick={updatePatientHistory}>update</button>
                         </div>
                     </div>
                 </div>
