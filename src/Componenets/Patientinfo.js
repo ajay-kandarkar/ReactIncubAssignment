@@ -98,7 +98,6 @@ function Patientinfo() {
 
         axios.put(`${process.env.REACT_APP_BASE_URL}/update-patient-details/${currentPatientId}`, updatedPatient)
             .then(response => {
-
                 toast.success("Successfully updated patient information", {
                     position: toast.POSITION.TOP_CENTER,
                 });
@@ -112,7 +111,6 @@ function Patientinfo() {
                     position: toast.POSITION.TOP_CENTER,
                 });
             });
-
     };
 
 
@@ -218,10 +216,7 @@ function Patientinfo() {
 
 
     const patientHistoryEdit = (index) => {
-
-
         setCurrentPatientHistoryId(patientHistory[index].Id);
-
         setPatientHistoryAdd({
             hospitalName: patientHistory[index].HospitalName,
             treatmentDetails: patientDetails[index].TreatmentDetails,
@@ -263,8 +258,6 @@ function Patientinfo() {
             });
         }
     };
-
-
     return (
         <div>
             <div className="container my-5">

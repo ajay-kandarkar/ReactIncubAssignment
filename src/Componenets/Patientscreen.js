@@ -140,7 +140,6 @@ function PatientScreen() {
                 break;
         }
     };
-
     const handleCheckboxChange = () => {
         setPatientDetails((prevPatientData) => ({
             ...prevPatientData,
@@ -152,7 +151,6 @@ function PatientScreen() {
             return updatedErrors;
         });
     };
-    
     const submitPatientDetails = () => {
         if (!patientDetails.name.trim()) {
             setErrors((prevErrors) => ({
@@ -210,9 +208,8 @@ function PatientScreen() {
             .catch((error) => {
                 console.error('Error inserting patient details', error);
             });
-
-        toast.success("Patient information saved successfully!!!!!", {
-            position: toast.POSITION.TOP_CENTER,
+               toast.success("Patient information saved successfully!!!!!", {
+               position: toast.POSITION.TOP_CENTER,
         });
         navigat("/");
     };
